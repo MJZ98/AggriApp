@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # agricultural_guide_app
 
 A new Flutter project.
@@ -14,3 +15,7 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+=======
+# agricultural-guide-app
+Graduation project - Flutter agricultural guide
+>>>>>>> a09a02afde25c473e6d8489f9d3ee0915f44c825
