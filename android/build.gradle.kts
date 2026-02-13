@@ -1,3 +1,16 @@
+buildscript {
+    val kotlin_version by extra("1.9.22")
+
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath("com.android.tools.build:gradle:8.6.1")
+        classpath(kotlin("gradle-plugin", version = kotlin_version))
+    }
+}
+
 allprojects {
     repositories {
         google()
