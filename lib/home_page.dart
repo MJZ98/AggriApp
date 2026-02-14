@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -23,32 +23,32 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("AgriApp"),
+        title: const Text("Agriculture Guide App"),
         centerTitle: true,
       ),
       body: Column(
         children: [
-          // Search Bar on top
+          // 🔍 Search bar (TOP)
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16),
             child: TextField(
               controller: _searchController,
-              onChanged: (val) {
+              onChanged: (value) {
                 setState(() {
-                  _searchQuery = val.toLowerCase();
+                  _searchQuery = value.trim().toLowerCase();
                 });
               },
               decoration: InputDecoration(
-                hintText: "Search articles, tips, FAQ...",
+                hintText: "Search Farming Guide...",
                 prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(14),
                 ),
               ),
             ),
           ),
 
-          // Farming Guide Icon
+          // 📘 Farming Guide Card
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: _buildHomeIcon(
@@ -58,11 +58,11 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
 
-          // Search Results
+          // 🔎 Search Results
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
-                  .collection('farming guide') // <-- هنا اسم الكلكشن
+                  .collection('farming guide')
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -70,36 +70,60 @@ class _HomePageState extends State<HomePage> {
                 }
 
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return const Center(child: Text("No items in Firebase"));
+                  return const Center(child: Text("No data found"));
                 }
 
-                // Filter locally based on search query
-                final query = _searchQuery.toLowerCase();
-                var filteredDocs = snapshot.data!.docs.where((doc) {
-                  final title = doc['title'].toString().toLowerCase();
-                  final content = doc['content'].toString().toLowerCase();
-                  return title.contains(query) || content.contains(query);
+                if (_searchQuery.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      "Start typing to search in Farming Guide",
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  );
+                }
+
+                final results = snapshot.data!.docs.where((doc) {
+                  final title =
+                  doc['title'].toString().toLowerCase();
+                  final content =
+                  doc['content'].toString().toLowerCase();
+
+                  return title.contains(_searchQuery) ||
+                      content.contains(_searchQuery);
                 }).toList();
 
-                if (filteredDocs.isEmpty) {
+                if (results.isEmpty) {
                   return const Center(child: Text("No results found"));
                 }
 
                 return ListView.builder(
                   padding: const EdgeInsets.all(16),
-                  itemCount: filteredDocs.length,
+                  itemCount: results.length,
                   itemBuilder: (context, index) {
-                    var doc = filteredDocs[index];
+                    final doc = results[index];
+
                     return Card(
                       margin: const EdgeInsets.only(bottom: 12),
-                      child: ExpansionTile(
+                      child: ListTile(
                         title: Text(doc['title']),
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Text(doc['content']),
-                          ),
-                        ],
+                        subtitle: Text(
+                          doc['content'],
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        trailing: const Icon(
+                          CupertinoIcons.chevron_forward,
+                          color: Colors.grey,
+                        ),
+                        onTap: () {
+                          if (doc['route'] != null &&
+                              doc['route'].toString().isNotEmpty) {
+                            Navigator.pushNamed(
+                              context,
+                              doc['route'],
+                            );
+                          }
+                        },
                       ),
                     );
                   },
@@ -112,7 +136,11 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildHomeIcon({required IconData icon, required String label, required VoidCallback onTap}) {
+  Widget _buildHomeIcon({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -139,8 +167,10 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(height: 12),
               Text(
                 label,
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ],
           ),
