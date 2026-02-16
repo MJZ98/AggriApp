@@ -28,7 +28,7 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Column(
         children: [
-          // 🔍 Search bar (TOP)
+          //  Search bar (TOP)
           Padding(
             padding: const EdgeInsets.all(16),
             child: TextField(
@@ -48,7 +48,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
 
-          // 📘 Farming Guide Card
+          //  Farming Guide Card
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: _buildHomeIcon(
@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
 
-          // 🔎 Search Results
+          //  Search Results
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
