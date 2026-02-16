@@ -3,8 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'home_page.dart';
-import 'UC-4_farm_management_guide/farming_guide_page.dart';
-import 'UC-4_farm_management_guide/category_content_pages.dart';
+import 'uc-4_farm_management_guide/farming_guide_page.dart';
+import 'uc-4_farm_management_guide/category_content_pages.dart';
 
 
 void main() async {
