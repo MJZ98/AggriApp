@@ -5,7 +5,7 @@ import 'firebase_options.dart';
 import 'home_page.dart';
 import 'uc-4_farm_management_guide/farming_guide_page.dart';
 import 'uc-4_farm_management_guide/category_content_pages.dart';
-
+import 'weather_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -52,6 +52,21 @@ class AgriGuideApp extends StatelessWidget {
         '/management': (context) => const ManagementPage(),
         '/faq': (context) => const FAQPage(),
       },
+    );
+  }
+}
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: WeatherScreen(),
     );
   }
 }
