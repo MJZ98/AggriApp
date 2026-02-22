@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../uc-14_request_support/request_support.dart';
+import '../uc-15_feedback_and_review/feed_back.dart';
+import '../uc-2_sign_in/sign_in_screen.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -25,10 +29,66 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text("Agriculture Guide App"),
         centerTitle: true,
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              if (value == 'support') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const RequestSupportPage(),
+                  ),
+                );
+              } else if (value == 'feedback') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const FeedbackPage(),
+                  ),
+                );
+              } else if (value == 'logout') {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SignInScreen(),
+                  ),
+                      (route) => false,
+                );
+              }
+            },
+            itemBuilder: (context) => const [
+              PopupMenuItem(
+                value: 'support',
+                child: ListTile(
+                  leading: Icon(Icons.support_agent),
+                  title: Text('Support'),
+                ),
+              ),
+              PopupMenuItem(
+                value: 'feedback',
+                child: ListTile(
+                  leading: Icon(Icons.feedback),
+                  title: Text('Feedback'),
+                ),
+              ),
+              PopupMenuDivider(),
+              PopupMenuItem(
+                value: 'logout',
+                child: ListTile(
+                  leading: Icon(Icons.logout, color: Colors.red),
+                  title: Text(
+                    'Logout',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
       body: Column(
         children: [
-          //  Search bar (TOP)
+          // Search Bar
           Padding(
             padding: const EdgeInsets.all(16),
             child: TextField(
@@ -48,7 +108,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
 
-          //  Farming Guide Card
+          // Farming Guide Card
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: _buildHomeIcon(
@@ -58,19 +118,59 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
 
-          //  Search Results
+          const SizedBox(height: 10),
+
+          // Buttons
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              children: [
+                _MenuButton(
+                  icon: Icons.support_agent,
+                  label: "Request Support",
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const RequestSupportPage(),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                _MenuButton(
+                  icon: Icons.thumbs_up_down,
+                  label: "Give Feedback",
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const FeedbackPage(),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 10),
+
+          // Firestore Search Results
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('farming guide')
                   .snapshots(),
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
+                if (snapshot.connectionState ==
+                    ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
                 }
 
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return const Center(child: Text("No data found"));
+                if (!snapshot.hasData ||
+                    snapshot.data!.docs.isEmpty) {
+                  return const Center(
+                    child: Text("No data found"),
+                  );
                 }
 
                 if (_searchQuery.isEmpty) {
@@ -82,7 +182,8 @@ class _HomePageState extends State<HomePage> {
                   );
                 }
 
-                final results = snapshot.data!.docs.where((doc) {
+                final results =
+                snapshot.data!.docs.where((doc) {
                   final title =
                   doc['title'].toString().toLowerCase();
                   final content =
@@ -93,7 +194,9 @@ class _HomePageState extends State<HomePage> {
                 }).toList();
 
                 if (results.isEmpty) {
-                  return const Center(child: Text("No results found"));
+                  return const Center(
+                    child: Text("No results found"),
+                  );
                 }
 
                 return ListView.builder(
@@ -103,7 +206,8 @@ class _HomePageState extends State<HomePage> {
                     final doc = results[index];
 
                     return Card(
-                      margin: const EdgeInsets.only(bottom: 12),
+                      margin:
+                      const EdgeInsets.only(bottom: 12),
                       child: ListTile(
                         title: Text(doc['title']),
                         subtitle: Text(
@@ -113,11 +217,12 @@ class _HomePageState extends State<HomePage> {
                         ),
                         trailing: const Icon(
                           CupertinoIcons.chevron_forward,
-                          color: Colors.grey,
                         ),
                         onTap: () {
                           if (doc['route'] != null &&
-                              doc['route'].toString().isNotEmpty) {
+                              doc['route']
+                                  .toString()
+                                  .isNotEmpty) {
                             Navigator.pushNamed(
                               context,
                               doc['route'],
@@ -163,7 +268,11 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 50, color: CupertinoColors.systemGreen),
+              Icon(
+                icon,
+                size: 50,
+                color: CupertinoColors.systemGreen,
+              ),
               const SizedBox(height: 12),
               Text(
                 label,
@@ -173,6 +282,37 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MenuButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onPressed;
+
+  const _MenuButton({
+    required this.icon,
+    required this.label,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton.icon(
+        onPressed: onPressed,
+        icon: Icon(icon),
+        label: Text(label),
+        style: ElevatedButton.styleFrom(
+          padding:
+          const EdgeInsets.symmetric(vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
         ),
       ),
