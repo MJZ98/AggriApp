@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'home_page.dart';
+import 'welcome_page.dart';
+import 'uc-1_sign_up/sign_up.dart';
 import 'uc-4_farm_management_guide/farming_guide_page.dart';
 import 'uc-4_farm_management_guide/category_content_pages.dart';
 
@@ -41,10 +43,12 @@ class AgriGuideApp extends StatelessWidget {
         ),
         dividerColor: Colors.transparent,
       ),
-      initialRoute: '/',
+      initialRoute: '/welcome',
       routes: {
         '/': (context) => const HomePage(),
-
+        '/welcome': (context) => const WelcomePage(),
+        //'/signin': (context) => const SignInScreen(),
+        '/signup': (context) => const SignUpScreen(),
         '/guide': (context) => const FarmingGuidePage(),
         '/history': (context) => const HistoryPage(),
         '/crops': (context) => const CropsPage(),
