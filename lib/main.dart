@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_core/firebase_core.dart';
-
+import 'firebase_options.dart';
 import 'uc-2_sign_in/sign_in_screen.dart';
 import '/home_page.dart';
-import '/UC-1_sign_up/sign_up.dart'; // Re-added import
 import '/UC-4_Farm_Management_Guide/farming_guide_page.dart';
 import '/UC-4_Farm_Management_Guide/category_content_pages.dart';
 
