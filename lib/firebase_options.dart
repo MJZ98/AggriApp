@@ -25,10 +25,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
         return windows;
       case TargetPlatform.linux:
@@ -78,6 +75,15 @@ class DefaultFirebaseOptions {
     authDomain: 'agricultural-guide-app.firebaseapp.com',
     storageBucket: 'agricultural-guide-app.firebasestorage.app',
     measurementId: 'G-B62LETBWVG',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyAN53kPtYN1ORuksQivZ5yu3tKFpkjhshQ',
+    appId: '1:805852120607:ios:bc937eb5970b73a410b72a',
+    messagingSenderId: '805852120607',
+    projectId: 'agricultural-guide-app',
+    storageBucket: 'agricultural-guide-app.firebasestorage.app',
+    iosBundleId: 'com.example.agriculturalGuideApp',
   );
 
 }
