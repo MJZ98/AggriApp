@@ -1,21 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'screens/firebase_options.dart';
+import 'firebase_options.dart';
+import 'home_page.dart';
+import 'uc-4_farm_management_guide/farming_guide_page.dart';
+import 'uc-4_farm_management_guide/category_content_pages.dart';
 
-import 'screens/sign_in_screen.dart';
-import 'screens/home_page.dart';
-import 'screens/UC-1_sign_up/sign_up.dart'; // Re-added import
-import 'screens/UC-4_Farm_Management_Guide/farming_guide_page.dart';
-import 'screens/UC-4_Farm_Management_Guide/category_content_pages.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
   runApp(const AgriGuideApp());
 }
 
@@ -45,11 +41,10 @@ class AgriGuideApp extends StatelessWidget {
         ),
         dividerColor: Colors.transparent,
       ),
-      initialRoute: '/login',
+      initialRoute: '/',
       routes: {
-        '/login': (context) => SignInScreen(),
-        '/signup': (context) => const SignUpPage(), // Re-added route
         '/': (context) => const HomePage(),
+
         '/guide': (context) => const FarmingGuidePage(),
         '/history': (context) => const HistoryPage(),
         '/crops': (context) => const CropsPage(),
