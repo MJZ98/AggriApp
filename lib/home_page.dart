@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../uc-14_request_support/request_support.dart';
 import '../uc-15_feedback_and_review/feed_back.dart';
 import '../uc-2_sign_in/sign_in_screen.dart';
+import '../uc-2_sign_in/otp_screen.dart'; // تم إضافة الاستدعاء للـ OTP
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,6 +22,23 @@ class _HomePageState extends State<HomePage> {
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+
+  // دالة مساعدة للتأكد من دخول المستخدم عبر OTP
+  void navigateAfterOtp() {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const OtpScreen()),
+          (route) => false,
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // هنا يمكنك استدعاء navigateAfterOtp() إذا تريد أن يظهر OTP فور فتح الهوم بيج بعد تسجيل الدخول
+    // مثلاً عند تحقق تسجيل الدخول
+    // navigateAfterOtp();
   }
 
   @override

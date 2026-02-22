@@ -37,11 +37,7 @@ dependencies:
   firebase_core: ^4.4.0
   cloud_firestore: ^6.1.2
   firebase_auth: ^6.1.4
-<<<<<<< HEAD
-  speech_to_text:  ^7.3.0
-=======
   speech_to_text: ^6.6.2
->>>>>>> 6b899c28025a12d275469f8a0305d238b554cec9
 
 dev_dependencies:
   flutter_test:

@@ -24,7 +24,7 @@ class WelcomePage extends StatelessWidget {
                 height: 50,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, '/sign_in');
+                    Navigator.pushNamed(context, '/login');
                   },
                   child: const Text('Sign In'),
                 ),

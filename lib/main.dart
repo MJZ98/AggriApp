@@ -2,19 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-<<<<<<< HEAD
+
+// Import pages
 import 'home_page.dart';
 import 'welcome_page.dart';
 import 'uc-1_sign_up/sign_up.dart';
+import 'uc-2_sign_in/sign_in_screen.dart';
+import 'uc-2_sign_in/otp_screen.dart';
 import 'uc-4_farm_management_guide/farming_guide_page.dart';
 import 'uc-4_farm_management_guide/category_content_pages.dart';
-
-=======
-import 'uc-2_sign_in/sign_in_screen.dart';
-import '/home_page.dart';
-import '/UC-4_Farm_Management_Guide/farming_guide_page.dart';
-import '/UC-4_Farm_Management_Guide/category_content_pages.dart';
->>>>>>> 6b899c28025a12d275469f8a0305d238b554cec9
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -52,20 +48,13 @@ class AgriGuideApp extends StatelessWidget {
         ),
         dividerColor: Colors.transparent,
       ),
-<<<<<<< HEAD
       initialRoute: '/welcome',
-=======
-      initialRoute: '/login',
->>>>>>> 6b899c28025a12d275469f8a0305d238b554cec9
       routes: {
-        '/login': (context) => SignInScreen(),
-        '/': (context) => const HomePage(),
-<<<<<<< HEAD
         '/welcome': (context) => const WelcomePage(),
-        //'/signin': (context) => const SignInScreen(),
+        '/login': (context) => const SignInScreen(),
         '/signup': (context) => const SignUpScreen(),
-=======
->>>>>>> 6b899c28025a12d275469f8a0305d238b554cec9
+        '/otp': (context) => const OtpScreen(), // إضافة صفحة OTP
+        '/': (context) => const HomePage(),
         '/guide': (context) => const FarmingGuidePage(),
         '/history': (context) => const HistoryPage(),
         '/crops': (context) => const CropsPage(),
