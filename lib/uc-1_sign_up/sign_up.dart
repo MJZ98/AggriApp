@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../uc-2_sign_in/otp_screen.dart'; // ربط صفحة OTP
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -56,9 +57,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sign Up'),
-      ),
+      appBar: AppBar(title: const Text('Sign Up')),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20.0),
@@ -107,8 +106,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     child: _isLoading
                         ? const CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                          )
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    )
                         : const Text('Complete Registration'),
                   ),
                 ),
@@ -136,11 +135,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Widget _buildTextField(String hint,
       {IconData? icon,
-      bool isPassword = false,
-      bool isNumeric = false,
-      bool isEmail = false,
-      TextEditingController? controller,
-      bool isConfirmPassword = false}) {
+        bool isPassword = false,
+        bool isNumeric = false,
+        bool isEmail = false,
+        TextEditingController? controller,
+        bool isConfirmPassword = false}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: TextFormField(
@@ -150,55 +149,36 @@ class _SignUpScreenState extends State<SignUpScreen> {
           icon: icon,
           suffixIcon: isPassword
               ? IconButton(
-                  icon: Icon((isConfirmPassword ? _isConfirmPasswordObscured : _isPasswordObscured)
-                      ? Icons.visibility_off_outlined
-                      : Icons.visibility_outlined),
-                  onPressed: () {
-                    setState(() {
-                      if (isConfirmPassword) {
-                        _isConfirmPasswordObscured = !_isConfirmPasswordObscured;
-                      } else {
-                        _isPasswordObscured = !_isPasswordObscured;
-                      }
-                    });
-                  },
-                )
+            icon: Icon((isConfirmPassword ? _isConfirmPasswordObscured : _isPasswordObscured)
+                ? Icons.visibility_off_outlined
+                : Icons.visibility_outlined),
+            onPressed: () {
+              setState(() {
+                if (isConfirmPassword) {
+                  _isConfirmPasswordObscured = !_isConfirmPasswordObscured;
+                } else {
+                  _isPasswordObscured = !_isPasswordObscured;
+                }
+              });
+            },
+          )
               : null,
         ),
         obscureText: isPassword ? (isConfirmPassword ? _isConfirmPasswordObscured : _isPasswordObscured) : false,
         keyboardType: isNumeric
             ? TextInputType.phone
             : isEmail
-                ? TextInputType.emailAddress
-                : TextInputType.text,
+            ? TextInputType.emailAddress
+            : TextInputType.text,
         validator: (val) {
-          if (val == null || val.isEmpty) {
-            return 'Required';
-          }
-          if (isEmail && !RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(val)) {
-            return 'Enter a valid email';
-          }
-          if (isNumeric) {
-            if (!RegExp(r'^[0-9]+$').hasMatch(val)) {
-              return 'Phone number must only contain digits';
-            }
-            if (val.length < 10) {
-              return 'Phone number must be at least 10 digits';
-            }
-          }
+          if (val == null || val.isEmpty) return 'Required';
+          if (isEmail && !RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(val)) return 'Enter a valid email';
+          if (isNumeric && (!RegExp(r'^[0-9]+$').hasMatch(val) || val.length < 10)) return 'Invalid phone number';
           if (isPassword && !isConfirmPassword) {
-            if (val.length < 8) {
-              return 'Password must be at least 8 characters.';
-            }
-            final hasLetters = val.contains(RegExp(r'[a-zA-Z]'));
-            final hasNumbers = val.contains(RegExp(r'[0-9]'));
-            if (!hasLetters || !hasNumbers) {
-              return 'Password must include both letters and numbers.';
-            }
+            if (val.length < 8) return 'Password must be at least 8 characters.';
+            if (!RegExp(r'[a-zA-Z]').hasMatch(val) || !RegExp(r'[0-9]').hasMatch(val)) return 'Password must include letters & numbers.';
           }
-          if (isConfirmPassword && val != _passwordController.text) {
-            return 'Passwords do not match';
-          }
+          if (isConfirmPassword && val != _passwordController.text) return 'Passwords do not match';
           return null;
         },
       ),
@@ -225,9 +205,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   void _handleSignUp() async {
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
+      setState(() => _isLoading = true);
 
       try {
         UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -248,22 +226,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
         if (!mounted) return;
 
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Success'),
-            content: const Text('Your profile has been created.'),
-            actions: [
-              TextButton(
-                child: const Text('Get Started'),
-                onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/welcome', (route) => false),
-              ),
-            ],
-          ),
+        // الانتقال مباشرة إلى OTP
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const OtpScreen()),
         );
       } on FirebaseAuthException catch (e) {
         if (!mounted) return;
-
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -278,11 +247,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
         );
       } finally {
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-        }
+        if (mounted) setState(() => _isLoading = false);
       }
     }
   }

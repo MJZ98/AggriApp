@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../uc-2_sign_in/otp_screen.dart';
+import 'otp_screen.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -22,13 +22,13 @@ class _SignInScreenState extends State<SignInScreen> {
     });
 
     try {
-      // Sign in with Firebase Auth
+      // تسجيل الدخول باستخدام Firebase
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
 
-      // Navigate to OTP Screen (or directly to Home '/' if you prefer)
+      // الانتقال إلى صفحة OTP بعد تسجيل الدخول
       if (mounted) {
         Navigator.push(
           context,
@@ -75,9 +75,9 @@ class _SignInScreenState extends State<SignInScreen> {
             _isLoading
                 ? const CircularProgressIndicator()
                 : ElevatedButton(
-                    onPressed: handleSignIn,
-                    child: const Text("Sign In"),
-                  ),
+              onPressed: handleSignIn,
+              child: const Text("Sign In"),
+            ),
             TextButton(
               onPressed: () {
                 Navigator.pushNamed(context, '/signup');

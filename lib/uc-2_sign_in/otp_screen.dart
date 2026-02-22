@@ -13,21 +13,17 @@ class _OtpScreenState extends State<OtpScreen> {
   String? _errorMessage;
 
   void _verifyOtp() {
-    // Basic verification logic: checking if OTP is '1234'
     if (_otpController.text == '1234') {
-      setState(() {
-        _errorMessage = null;
-      });
-      // Navigate to HomePage (where UC-4 is) and remove all previous screens
+      setState(() => _errorMessage = null);
+
+      // الانتقال مباشرة إلى HomePage وإزالة كل الشاشات السابقة
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => const HomePage()),
-        (route) => false,
+            (route) => false,
       );
     } else {
-      setState(() {
-        _errorMessage = "Invalid OTP. Use 1234 to test.";
-      });
+      setState(() => _errorMessage = "Invalid OTP. Use 1234 to test.");
     }
   }
 
