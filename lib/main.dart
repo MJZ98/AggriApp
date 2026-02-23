@@ -11,6 +11,7 @@ import 'uc-2_sign_in/sign_in_screen.dart';
 import 'uc-2_sign_in/otp_screen.dart';
 import 'uc-4_farm_management_guide/farming_guide_page.dart';
 import 'uc-4_farm_management_guide/category_content_pages.dart';
+import 'uc-7_crop_management/crop_management_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -53,7 +54,7 @@ class AgriGuideApp extends StatelessWidget {
         '/welcome': (context) => const WelcomePage(),
         '/login': (context) => const SignInScreen(),
         '/signup': (context) => const SignUpScreen(),
-        '/otp': (context) => const OtpScreen(), // إضافة صفحة OTP
+        '/otp': (context) => const OtpScreen(), // OTP screen
         '/': (context) => const HomePage(),
         '/guide': (context) => const FarmingGuidePage(),
         '/history': (context) => const HistoryPage(),
@@ -61,6 +62,7 @@ class AgriGuideApp extends StatelessWidget {
         '/water': (context) => const WaterResourcesPage(),
         '/management': (context) => const ManagementPage(),
         '/faq': (context) => const FAQPage(),
+        '/crop-management': (context) => CropManagementPage(), //crop management page
       },
     );
   }

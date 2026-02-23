@@ -144,6 +144,13 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               children: [
                 _MenuButton(
+                  icon: Icons.eco,
+                  label: "Crop Management",
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/crop-management');
+                  },
+                ),
+                _MenuButton(
                   icon: Icons.support_agent,
                   label: "Request Support",
                   onPressed: () => Navigator.push(
