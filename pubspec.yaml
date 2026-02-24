@@ -37,6 +37,10 @@ dependencies:
   firebase_core: ^2.32.0
   cloud_firestore: ^4.7.0
   speech_to_text:  ^7.3.0
+  http: ^1.6.0
+  shared_preferences: ^2.5.4
+  geolocator: ^14.0.2
+  geocoding: ^4.0.0
 
 dev_dependencies:
   flutter_test:
