@@ -2,19 +2,29 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'crop_model.dart';
 
 class CropService {
-  final _db = FirebaseFirestore.instance;
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  Stream<List<CropModel>> getUserCrops(String userId) {
+  /// ================================
+  /// جلب مزروعات المستخدم
+  /// ================================
+  Stream<List<CropModel>> getUserCrops(String uid) {
     return _db
+        .collection('user_crops')
+        .doc(uid)
         .collection('crops')
-        .where('userId', isEqualTo: userId)
         .snapshots()
-        .map((snapshot) =>
-        snapshot.docs.map((e) => CropModel.fromFirestore(e)).toList());
+        .map((snapshot) {
+      return snapshot.docs
+          .map((doc) => CropModel.fromFirestore(doc))
+          .toList();
+    });
   }
 
+  /// ================================
+  /// اقتراح حالة الحصاد
+  /// ================================
   String getHarvestSuggestion(CropModel crop) {
-    final daysLeft =
+    final int daysLeft =
         crop.harvestDate.difference(DateTime.now()).inDays;
 
     if (daysLeft <= 0) {

@@ -1,9 +1,9 @@
-import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'crop_model.dart';
 
 class CropPrinter {
+  // دالة لطباعة محصول
   static Future<void> printCrop(CropModel crop) async {
     final pdf = pw.Document();
 
@@ -27,7 +27,7 @@ class CropPrinter {
     );
 
     await Printing.layoutPdf(
-      onLayout: (PdfPageFormat format) async => pdf.save(),
+      onLayout: (format) async => pdf.save(),
     );
   }
 }

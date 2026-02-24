@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'crop_service.dart';
-import 'crop_printer.dart';
-import 'crop_model.dart';
+import 'crop_printer.dart' as printer;
+import 'crop_model.dart' as model;
+import 'package:intl/intl.dart';
 
 class CropManagementPage extends StatelessWidget {
   final CropService service = CropService();
+
+  String formatDate(DateTime date) {
+    return DateFormat('yyyy-MM-dd').format(date);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -13,19 +18,20 @@ class CropManagementPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Crop Management'),
+        title: const Text('Crop Management'),
       ),
-      body: StreamBuilder<List<CropModel>>(
-        stream: service.getUserCrops(user.uid),
+      body: StreamBuilder<List<model.CropModel>>(
+        stream: service.getUserCrops(user.uid), // المسار مضبوط الآن
         builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return Center(child: Text('No Data'));
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('No Data'));
           }
 
           final crops = snapshot.data!;
-          if (crops.isEmpty) {
-            return Center(child: Text('No Data'));
-          }
 
           return ListView.builder(
             itemCount: crops.length,
@@ -34,42 +40,74 @@ class CropManagementPage extends StatelessWidget {
               final suggestion = service.getHarvestSuggestion(crop);
 
               return Card(
-                margin: EdgeInsets.all(12),
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 3,
                 child: Padding(
-                  padding: EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(crop.name,
-                          style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold)),
-                      SizedBox(height: 8),
-                      Text('Planting: ${crop.plantingDate}'),
-                      Text('Harvest: ${crop.harvestDate}'),
-                      SizedBox(height: 8),
-                      Text('Suggestion: $suggestion'),
+                      Text(
+                        crop.name,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Planting: ${formatDate(crop.plantingDate)}'),
+                          Text('Harvest: ${formatDate(crop.harvestDate)}'),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Status: $suggestion',
+                        style: TextStyle(
+                          color: suggestion.contains('Ready')
+                              ? Colors.green
+                              : suggestion.contains('approaching')
+                              ? Colors.orange
+                              : Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
                       Align(
                         alignment: Alignment.centerRight,
                         child: ElevatedButton.icon(
-                          icon: Icon(Icons.print),
-                          label: Text('Print'),
                           onPressed: () async {
                             try {
-                              await CropPrinter.printCrop(crop);
+                              await printer.CropPrinter.printCrop(crop);
                             } catch (_) {
                               showDialog(
                                 context: context,
                                 builder: (_) => AlertDialog(
-                                  title: Text('Error'),
-                                  content:
-                                  Text('No printer connected'),
+                                  title: const Text('Error'),
+                                  content: const Text('No printer connected'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: const Text('OK'),
+                                    ),
+                                  ],
                                 ),
                               );
                             }
                           },
+                          icon: const Icon(Icons.print),
+                          label: const Text('Print'),
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
