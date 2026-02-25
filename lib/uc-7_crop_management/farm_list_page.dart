@@ -1,34 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:intl/intl.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'farm_detail_page.dart'; // استدعاء صفحة تفاصيل المزرعة
 
-import 'crop_service.dart';
-import 'crop_model.dart';
-import 'crop_printer.dart' as printer;
-import 'map_picker_page.dart';
-import 'farm_detail_page.dart'; // تأكد أنه موجود
-
-class CropManagementPage extends StatefulWidget {
-  const CropManagementPage({super.key});
+class FarmListPage extends StatefulWidget {
+  const FarmListPage({super.key});
 
   @override
-  State<CropManagementPage> createState() => _CropManagementPageState();
+  State<FarmListPage> createState() => _FarmListPageState();
 }
 
-class _CropManagementPageState extends State<CropManagementPage> {
+class _FarmListPageState extends State<FarmListPage> {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final user = FirebaseAuth.instance.currentUser!;
-  final CropService _cropService = CropService();
-
-  String formatDate(DateTime date) => DateFormat('yyyy-MM-dd').format(date);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Crop & Farm Management'),
+        title: const Text('Farm List'),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
@@ -36,32 +26,6 @@ class _CropManagementPageState extends State<CropManagementPage> {
             onPressed: _showAddFarmDialog,
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
-        backgroundColor: Colors.green,
-        tooltip: 'Add Crop',
-        onPressed: () async {
-          // إذا فيه مزارع بالفعل، نختار الأولى افتراضياً
-          final snap = await _db
-              .collection('user_farm_info')
-              .where('userId', isEqualTo: user.uid)
-              .get();
-          if (snap.docs.isNotEmpty) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => FarmDetailPage(
-                  farmId: snap.docs.first.id,
-                  farmName: snap.docs.first['farmName'],
-                ),
-              ),
-            );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Please add a farm first')));
-          }
-        },
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: _db
@@ -125,7 +89,7 @@ class _CropManagementPageState extends State<CropManagementPage> {
     );
   }
 
-  /// ===== إضافة مزرعة جديدة =====
+  /// ==== إضافة مزرعة جديدة ====
   void _showAddFarmDialog() {
     final nameController = TextEditingController();
     final sizeController = TextEditingController();
@@ -165,10 +129,8 @@ class _CropManagementPageState extends State<CropManagementPage> {
                   'createdAt': FieldValue.serverTimestamp(),
                   'activeCropsCount': 0,
                   'finishedCropsCount': 0,
-                  'isFarmActive': true,
                   'totalCropsPlanted': 0,
-                  'lastActivityAt': FieldValue.serverTimestamp(),
-                  'farmLocationId': 0,
+                  'isFarmActive': true,
                 });
                 Navigator.pop(context);
               }

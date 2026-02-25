@@ -5,34 +5,37 @@ class CropService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   /// ================================
-  /// جلب مزروعات المستخدم
+  /// جلب مزروعات المستخدم مع خيارات الفلترة
   /// ================================
-  Stream<List<CropModel>> getUserCrops(String uid) {
-    return _db
-        .collection('user_crops')
-        .doc(uid)
-        .collection('crops')
-        .snapshots()
-        .map((snapshot) {
-      return snapshot.docs
-          .map((doc) => CropModel.fromFirestore(doc))
-          .toList();
+  Stream<List<CropModel>> getUserCrops(
+      String uid, {
+        String? farmId,
+        bool onlyActive = false,
+      }) {
+    Query ref = _db.collection('user_crops').doc(uid).collection('crops');
+
+    if (farmId != null) {
+      ref = ref.where('farmId', isEqualTo: farmId);
+    }
+
+    if (onlyActive) {
+      ref = ref.where('status', isEqualTo: 'active');
+    }
+
+    return ref.snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) => CropModel.fromFirestore(doc)).toList();
     });
   }
 
   /// ================================
   /// اقتراح حالة الحصاد
   /// ================================
-  String getHarvestSuggestion(CropModel crop) {
-    final int daysLeft =
-        crop.harvestDate.difference(DateTime.now()).inDays;
+  String calculateStatus(CropModel crop) {
+    final now = DateTime.now();
+    final diff = crop.harvestDate.difference(now).inDays;
 
-    if (daysLeft <= 0) {
-      return 'Ready to harvest now';
-    } else if (daysLeft <= 7) {
-      return 'Harvest approaching soon';
-    } else {
-      return 'Crop growing normally';
-    }
+    if (diff <= 0) return 'Ready';
+    if (diff <= 7) return 'Approaching';
+    return 'Growing';
   }
 }
