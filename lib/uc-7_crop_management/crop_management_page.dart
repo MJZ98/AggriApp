@@ -74,8 +74,7 @@ class _CropManagementPageState extends State<CropManagementPage> {
               final suggestion = service.getHarvestSuggestion(crop);
 
               return Card(
-                margin:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),
                 elevation: 3,
@@ -91,13 +90,10 @@ class _CropManagementPageState extends State<CropManagementPage> {
                       ),
                       const SizedBox(height: 8),
                       Row(
-                        mainAxisAlignment:
-                        MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                              'Planting: ${formatDate(crop.plantingDate)}'),
-                          Text(
-                              'Harvest: ${formatDate(crop.harvestDate)}'),
+                          Text('Planting: ${formatDate(crop.plantingDate)}'),
+                          Text('Harvest: ${formatDate(crop.harvestDate)}'),
                         ],
                       ),
                       const SizedBox(height: 8),
@@ -125,12 +121,10 @@ class _CropManagementPageState extends State<CropManagementPage> {
                                 context: context,
                                 builder: (_) => AlertDialog(
                                   title: const Text('Error'),
-                                  content: const Text(
-                                      'No printer connected'),
+                                  content: const Text('No printer connected'),
                                   actions: [
                                     TextButton(
-                                      onPressed: () =>
-                                          Navigator.pop(context),
+                                      onPressed: () => Navigator.pop(context),
                                       child: const Text('OK'),
                                     ),
                                   ],
@@ -152,17 +146,14 @@ class _CropManagementPageState extends State<CropManagementPage> {
   }
 
   /// ===============================
-  /// Add Crop Dialog (كامل)
+  /// Add Crop Dialog with Master List & Map
   /// ===============================
   Future<void> _showAddCropDialog() async {
     String? selectedCropId;
     DateTime plantingDate = DateTime.now();
-    LatLng selectedLocation =
-    const LatLng(24.7136, 46.6753);
+    LatLng selectedLocation = const LatLng(24.7136, 46.6753);
 
-    final cropsMasterSnap =
-    await _db.collection('crops_master').get();
-
+    final cropsMasterSnap = await _db.collection('crops_master').get();
     final cropsMaster = cropsMasterSnap.docs;
 
     showDialog(
@@ -172,13 +163,11 @@ class _CropManagementPageState extends State<CropManagementPage> {
           int harvestDays = 0;
 
           if (selectedCropId != null) {
-            final selected = cropsMaster.firstWhere(
-                    (e) => e['cropId'] == selectedCropId);
+            final selected = cropsMaster.firstWhere((e) => e['cropId'] == selectedCropId);
             harvestDays = selected['defaultHarvestDays'];
           }
 
-          DateTime harvestDate =
-          plantingDate.add(Duration(days: harvestDays));
+          DateTime harvestDate = plantingDate.add(Duration(days: harvestDays));
 
           return AlertDialog(
             title: const Text('Add Crop'),
@@ -204,8 +193,7 @@ class _CropManagementPageState extends State<CropManagementPage> {
                   Row(
                     children: [
                       Expanded(
-                        child: Text(
-                            'Planting Date: ${formatDate(plantingDate)}'),
+                        child: Text('Planting Date: ${formatDate(plantingDate)}'),
                       ),
                       IconButton(
                         icon: const Icon(Icons.calendar_today),
@@ -226,8 +214,7 @@ class _CropManagementPageState extends State<CropManagementPage> {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                      'Expected Harvest: ${formatDate(harvestDate)}'),
+                  Text('Expected Harvest: ${formatDate(harvestDate)}'),
                   const SizedBox(height: 12),
                   Row(
                     children: [
@@ -238,13 +225,11 @@ class _CropManagementPageState extends State<CropManagementPage> {
                       IconButton(
                         icon: const Icon(Icons.map),
                         onPressed: () async {
-                          final result =
-                          await Navigator.push<LatLng>(
+                          final result = await Navigator.push<LatLng>(
                             context,
                             MaterialPageRoute(
                               builder: (_) => _MapPickerPage(
-                                initialLocation:
-                                selectedLocation,
+                                initialLocation: selectedLocation,
                               ),
                             ),
                           );
@@ -269,10 +254,7 @@ class _CropManagementPageState extends State<CropManagementPage> {
                     ? null
                     : () async {
                   final selected =
-                  cropsMaster.firstWhere(
-                          (e) =>
-                      e['cropId'] ==
-                          selectedCropId);
+                  cropsMaster.firstWhere((e) => e['cropId'] == selectedCropId);
 
                   await _db
                       .collection('user_crops')
@@ -281,14 +263,10 @@ class _CropManagementPageState extends State<CropManagementPage> {
                       .add({
                     'cropName': selected['name'],
                     'cropMasterId': selected['cropId'],
-                    'plantingDate':
-                    Timestamp.fromDate(plantingDate),
-                    'harvestDate':
-                    Timestamp.fromDate(harvestDate),
-                    'locationLat':
-                    selectedLocation.latitude,
-                    'locationLng':
-                    selectedLocation.longitude,
+                    'plantingDate': Timestamp.fromDate(plantingDate),
+                    'harvestDate': Timestamp.fromDate(harvestDate),
+                    'locationLat': selectedLocation.latitude,
+                    'locationLng': selectedLocation.longitude,
                     'status': 'active',
                   });
 
@@ -309,7 +287,6 @@ class _CropManagementPageState extends State<CropManagementPage> {
 /// ===============================
 class _MapPickerPage extends StatefulWidget {
   final LatLng initialLocation;
-
   const _MapPickerPage({required this.initialLocation});
 
   @override
@@ -340,21 +317,13 @@ class _MapPickerPageState extends State<_MapPickerPage> {
         ],
       ),
       body: GoogleMap(
-        initialCameraPosition: CameraPosition(
-          target: selected,
-          zoom: 15,
-        ),
+        initialCameraPosition: CameraPosition(target: selected, zoom: 15),
         onTap: (latLng) {
           setState(() {
             selected = latLng;
           });
         },
-        markers: {
-          Marker(
-            markerId: const MarkerId('m1'),
-            position: selected,
-          )
-        },
+        markers: {Marker(markerId: const MarkerId('m1'), position: selected)},
       ),
     );
   }
