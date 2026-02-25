@@ -2,15 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+
+// Import pages
 import 'home_page.dart';
+import 'welcome_page.dart';
+import 'uc-1_sign_up/sign_up.dart';
+import 'uc-2_sign_in/sign_in_screen.dart';
+import 'uc-2_sign_in/otp_screen.dart';
 import 'uc-4_farm_management_guide/farming_guide_page.dart';
 import 'uc-4_farm_management_guide/category_content_pages.dart';
 import 'uc-6_weather_statusforecast/weather_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
   runApp(const AgriGuideApp());
 }
 
@@ -40,10 +48,13 @@ class AgriGuideApp extends StatelessWidget {
         ),
         dividerColor: Colors.transparent,
       ),
-      initialRoute: '/',
+      initialRoute: '/welcome',
       routes: {
+        '/welcome': (context) => const WelcomePage(),
+        '/login': (context) => const SignInScreen(),
+        '/signup': (context) => const SignUpScreen(),
+        '/otp': (context) => const OtpScreen(), // إضافة صفحة OTP
         '/': (context) => const HomePage(),
-
         '/guide': (context) => const FarmingGuidePage(),
         '/history': (context) => const HistoryPage(),
         '/crops': (context) => const CropsPage(),
