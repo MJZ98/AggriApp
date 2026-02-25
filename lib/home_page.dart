@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../uc-14_request_support/request_support.dart';
 import '../uc-15_feedback_and_review/feed_back.dart';
 import '../uc-2_sign_in/sign_in_screen.dart';
-import '../uc-2_sign_in/otp_screen.dart'; // تم إضافة الاستدعاء للـ OTP
+import '../uc-2_sign_in/otp_screen.dart'; // OTP screen
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -24,21 +24,12 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  // دالة مساعدة للتأكد من دخول المستخدم عبر OTP
   void navigateAfterOtp() {
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => const OtpScreen()),
           (route) => false,
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    // هنا يمكنك استدعاء navigateAfterOtp() إذا تريد أن يظهر OTP فور فتح الهوم بيج بعد تسجيل الدخول
-    // مثلاً عند تحقق تسجيل الدخول
-    // navigateAfterOtp();
   }
 
   @override
@@ -94,10 +85,7 @@ class _HomePageState extends State<HomePage> {
                 value: 'logout',
                 child: ListTile(
                   leading: Icon(Icons.logout, color: Colors.red),
-                  title: Text(
-                    'Logout',
-                    style: TextStyle(color: Colors.red),
-                  ),
+                  title: Text('Logout', style: TextStyle(color: Colors.red)),
                 ),
               ),
             ],
@@ -126,30 +114,32 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
 
-          // Farming Guide Card
+          // Home Icons
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: _buildHomeIcon(
               icon: CupertinoIcons.book_fill,
               label: "Farming Guide",
               onTap: () => Navigator.pushNamed(context, '/guide'),
+              color: Colors.white,
             ),
           ),
-
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: _buildHomeIcon(
+              icon: Icons.eco,
+              label: "Crop Management",
+              onTap: () => Navigator.pushNamed(context, '/crop-management'),
+              color: Colors.white,
+            ),
+          ),
           const SizedBox(height: 10),
 
-          // Buttons
+          // Other Buttons
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               children: [
-                _MenuButton(
-                  icon: Icons.eco,
-                  label: "Crop Management",
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/crop-management');
-                  },
-                ),
                 _MenuButton(
                   icon: Icons.support_agent,
                   label: "Request Support",
@@ -184,18 +174,12 @@ class _HomePageState extends State<HomePage> {
                   .collection('farming guide')
                   .snapshots(),
               builder: (context, snapshot) {
-                if (snapshot.connectionState ==
-                    ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
                 }
 
-                if (!snapshot.hasData ||
-                    snapshot.data!.docs.isEmpty) {
-                  return const Center(
-                    child: Text("No data found"),
-                  );
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Center(child: Text("No data found"));
                 }
 
                 if (_searchQuery.isEmpty) {
@@ -207,21 +191,15 @@ class _HomePageState extends State<HomePage> {
                   );
                 }
 
-                final results =
-                snapshot.data!.docs.where((doc) {
-                  final title =
-                  doc['title'].toString().toLowerCase();
-                  final content =
-                  doc['content'].toString().toLowerCase();
-
+                final results = snapshot.data!.docs.where((doc) {
+                  final title = doc['title'].toString().toLowerCase();
+                  final content = doc['content'].toString().toLowerCase();
                   return title.contains(_searchQuery) ||
                       content.contains(_searchQuery);
                 }).toList();
 
                 if (results.isEmpty) {
-                  return const Center(
-                    child: Text("No results found"),
-                  );
+                  return const Center(child: Text("No results found"));
                 }
 
                 return ListView.builder(
@@ -229,10 +207,8 @@ class _HomePageState extends State<HomePage> {
                   itemCount: results.length,
                   itemBuilder: (context, index) {
                     final doc = results[index];
-
                     return Card(
-                      margin:
-                      const EdgeInsets.only(bottom: 12),
+                      margin: const EdgeInsets.only(bottom: 12),
                       child: ListTile(
                         title: Text(doc['title']),
                         subtitle: Text(
@@ -240,18 +216,11 @@ class _HomePageState extends State<HomePage> {
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        trailing: const Icon(
-                          CupertinoIcons.chevron_forward,
-                        ),
+                        trailing: const Icon(CupertinoIcons.chevron_forward),
                         onTap: () {
                           if (doc['route'] != null &&
-                              doc['route']
-                                  .toString()
-                                  .isNotEmpty) {
-                            Navigator.pushNamed(
-                              context,
-                              doc['route'],
-                            );
+                              doc['route'].toString().isNotEmpty) {
+                            Navigator.pushNamed(context, doc['route']);
                           }
                         },
                       ),
@@ -266,47 +235,53 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  // Widget لأي أيقونة رئيسية مع أنيميشن
   Widget _buildHomeIcon({
     required IconData icon,
     required String label,
     required VoidCallback onTap,
+    Color color = Colors.white,
   }) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
         borderRadius: BorderRadius.circular(20),
         onTap: onTap,
-        child: Container(
-          width: double.infinity,
-          height: 140,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                icon,
-                size: 50,
-                color: CupertinoColors.systemGreen,
-              ),
-              const SizedBox(height: 12),
-              Text(
-                label,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
+        child: TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0, end: 1),
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.elasticOut,
+          builder: (context, value, child) {
+            return Transform.scale(
+              scale: value,
+              child: child,
+            );
+          },
+          child: Container(
+            width: double.infinity,
+            height: 140,
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
                 ),
-              ),
-            ],
+              ],
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, size: 50, color: CupertinoColors.systemGreen),
+                const SizedBox(height: 12),
+                Text(
+                  label,
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -334,11 +309,8 @@ class _MenuButton extends StatelessWidget {
         icon: Icon(icon),
         label: Text(label),
         style: ElevatedButton.styleFrom(
-          padding:
-          const EdgeInsets.symmetric(vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       ),
     );

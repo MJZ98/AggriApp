@@ -9,7 +9,7 @@ class CropModel {
   final int expectedHarvestDays;   // مدة الحصاد
   final double locationLat;        // خط العرض
   final double locationLng;        // خط الطول
-
+  final String? iconUrl;
 
   CropModel({
     required this.id,
@@ -20,6 +20,7 @@ class CropModel {
     required this.expectedHarvestDays,
     required this.locationLat,
     required this.locationLng,
+    this.iconUrl,
   });
 
   factory CropModel.fromFirestore(DocumentSnapshot doc) {
@@ -36,6 +37,7 @@ class CropModel {
       expectedHarvestDays: data['expectedHarvestDays'] ?? 0,
       locationLat: (data['locationLat'] ?? 0).toDouble(),
       locationLng: (data['locationLng'] ?? 0).toDouble(),
+      iconUrl: data['iconUrl'],
 
     );
   }
