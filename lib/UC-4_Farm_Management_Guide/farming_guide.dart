@@ -3,13 +3,6 @@ import 'package:flutter/cupertino.dart';
 //
 
 
-void main() {
-  runApp(const AgriGuideApp());
-}
-
-class AgriGuideApp extends StatelessWidget {
-  const AgriGuideApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
