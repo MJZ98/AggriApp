@@ -28,7 +28,6 @@ import 'package:flutter/cupertino.dart';
 
     );
   }
-}
 
 
 // Farming Page Code Start here
